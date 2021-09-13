@@ -3,16 +3,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const booksHandler = require('./books/books')
 
-const app = express();
-app.use(cors());
+const server = express();
+server.use(cors());
 
 const PORT = process.env.PORT || 3001;
-
-app.get('/test', (request, response) => {
+// Routes
+server.get('/books', booksHandler)
+server.get('/test', (request, response) => {
 
   response.send('test request received')
 
 })
 
-app.listen(PORT, () => console.log(`listening on ${PORT}`));
+server.listen(PORT, () => console.log(`listening on ${PORT}`));
