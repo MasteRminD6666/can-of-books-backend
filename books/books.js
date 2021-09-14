@@ -88,12 +88,14 @@ function booksHandler(req,res)
 
 async function addHandler(req,res) { 
     const googleName = req.body.BookName
+    const ownerEmail = req.body.ownerEmail
+    
 
    
     axios.get(`https://www.googleapis.com/books/v1/volumes?q=${googleName}&key=${googleKey}&maxResults=1`)
     .then((results) => {
       const bookArray = results.data.items
-   
+   console.log(bookArray    );
        let googleArray= bookArray.map((book) => {
               
                 return new GoogleBooks(book)
@@ -103,15 +105,24 @@ async function addHandler(req,res) {
             books.create({ 
                 title: item.title,
                 img: item.image,
-                description: item.desc,
+                description: item.description,
                 status: item.status,
-                email: 'rami-zaitoun@hotmail.com',
+                email: ownerEmail,
                 author: item.auth[0],
                 pages: item.pages,
             });
         })
-        
-        res.send(googleArray)
+        books.find({email:ownerEmail},(err,result) => {
+            if (err) {
+                console.log(err);
+            }
+            else{
+                res.send(result);
+            }
+          })
+
+        // res.send(googleArray)
+        // console.log(googleArray);
     })
    
  }
@@ -119,7 +130,7 @@ async function addHandler(req,res) {
 function GoogleBooks(book){
     this.title = book.volumeInfo.title;
     this.image= book.volumeInfo.imageLinks.thumbnail;
-    this.desc= book.volumeInfo.description;
+    this.description= book.volumeInfo.description;
     this.auth= book.volumeInfo.authors;
     this.status= book.volumeInfo.printType;
     this.pages=book.volumeInfo.pageCount;
