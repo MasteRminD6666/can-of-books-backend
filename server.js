@@ -8,7 +8,7 @@ const booksHandler = require('./books/books')
 const server = express();
 server.use(cors());
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 // Routes
 server.get('/books', booksHandler)
 server.get('/test', (request, response) => {
