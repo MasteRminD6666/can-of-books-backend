@@ -99,7 +99,7 @@ async function addHandler(req,res) {
                 return new GoogleBooks(book)
         })
         // res.send(googleArray)
-       let postArr= googleArray.map((item) => {
+     googleArray.map((item) => {
             books.create({ 
                 title: item.title,
                 img: item.image,
@@ -111,7 +111,7 @@ async function addHandler(req,res) {
             });
         })
         
-        res.send(postArr)
+        res.send(googleArray)
     })
    
  }
