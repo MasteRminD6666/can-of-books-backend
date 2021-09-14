@@ -109,9 +109,9 @@ async function addHandler(req,res) {
                 author: item.auth[0],
                 pages: item.pages,
             });
-            res.send(postArr)
-          })
-   
+        })
+        
+        res.send(postArr)
     })
    
  }
