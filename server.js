@@ -13,8 +13,10 @@ server.use(cors());
 
 const PORT = process.env.PORT;
 // Routes
-server.get('/books', booksFun.booksHandler)
-server.post('/addbook', booksFun.addHandler)
+server.get('/books', booksFun.booksHandler);    
+server.post('/addbook', booksFun.addHandler);
+server.delete('/deleteBook/:id', booksFun.deleteHandler);
+server.put('/update/:id', booksFun.updateBookHandler);
 
 
 server.listen(PORT, () => console.log(`listening on ${PORT}`));

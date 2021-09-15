@@ -73,7 +73,7 @@ async function saving() {
 function booksHandler(req,res)
 {
     const userEmail = req.query.email;
-    console.log(userEmail);
+   
     books.find({email:userEmail},(err,result) => {
       if (err) {
           console.log(err);
@@ -86,21 +86,21 @@ function booksHandler(req,res)
 
 // add book
 
-async function addHandler(req,res) { 
+ async function addHandler(req,res) { 
     const googleName = req.body.BookName
     const ownerEmail = req.body.ownerEmail
     
 
-   
+    let googleArray
     axios.get(`https://www.googleapis.com/books/v1/volumes?q=${googleName}&key=${googleKey}&maxResults=1`)
     .then((results) => {
       const bookArray = results.data.items
-   console.log(bookArray    );
-       let googleArray= bookArray.map((book) => {
+   
+       googleArray= bookArray.map((book) => {
               
                 return new GoogleBooks(book)
         })
-        // res.send(googleArray)
+        // console.log(googleArray);
      googleArray.map((item) => {
             books.create({ 
                 title: item.title,
@@ -111,21 +111,28 @@ async function addHandler(req,res) {
                 author: item.auth[0],
                 pages: item.pages,
             });
+            
         })
+        
+
+        // res.send(googleArray)
+      
+    })
+    const timeout =  setTimeout(() => {
         books.find({email:ownerEmail},(err,result) => {
             if (err) {
                 console.log(err);
             }
             else{
                 res.send(result);
+                console.log(result);
             }
           })
-
-        // res.send(googleArray)
-        // console.log(googleArray);
-    })
-   
+    }, 1000);
+    
+    timeout()
  }
+ 
 //using google api 
 function GoogleBooks(book){
     this.title = book.volumeInfo.title;
@@ -137,7 +144,42 @@ function GoogleBooks(book){
 }
 
 
+//delte a book 
+deleteHandler= (req,res) => {
+    const ownerEmail= req.query.email   
+  const bookId = req.params.id
+  books.deleteOne({_id:bookId},(err,result) => {
+    
+    books.find({email:ownerEmail},(err,result) => {
+        if (err) {
+            console.log(err);
+        }
+        else{
+            res.send(result);
+            console.log(result);
+        }
+      })
+  })
+}
 
+//update a book 
+function updateBookHandler(req,res){
+const bookid = req.params.id
+const title = req.body.title
+const ownerEmail = req.body.email
 
+books.findByIdAndUpdate(bookid,{title},(err,result) => {
+    books.find({email:ownerEmail},(err,result) => {
+        if (err) {
+            console.log(err);
+        }
+        else{
+            res.send(result);
+        
+        }
+      })
+})
 
-module.exports = {booksHandler,addHandler}
+}
+
+module.exports = {booksHandler,addHandler,deleteHandler,updateBookHandler}
